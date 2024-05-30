@@ -8,17 +8,19 @@ import productRouter from "./Routes/product.js";
 
 const app = Express();
 
-dotEnv.config({ path: "./dot.env" });
+dotEnv.config({ path: "./.env" });
 app.use(cors());
-app.use(cors({
+app.use(
+  cors({
     credentials: true,
     preflightContinue: true,
     allowedHeaders: `http://localhost:5173/`,
-    methods: ["POST", "GET", "PATCH"]
-}));
+    methods: ["POST", "GET", "PATCH"],
+  })
+);
 app.use(Express.json());
 const storage = multer.memoryStorage();
-const handler = multer({ storage })
+const handler = multer({ storage });
 
 //Port Other Secret Keys
 const port = process.env.NODE_PORT || 8080;
@@ -28,11 +30,12 @@ app.use("/api/v1/auth", userRouter);
 app.use("/api/v1/product", handler.array("image", 10), productRouter);
 
 // Mongodb Connection
-mongoose.connect(`${process.env.NODE_DBU}`)
-    .then((res) => {
-        console.log(`DB CONNECTED`);
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+mongoose
+  .connect(`${process.env.NODE_DBU}`)
+  .then((res) => {
+    console.log(`DB CONNECTED`);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 app.listen(port, () => console.log(`Server Is Running In Port-${port}`));
